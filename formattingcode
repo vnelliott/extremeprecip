@@ -1,1 +1,23 @@
+import csv
 
+txt_file = 'input.txt'  # Path to the input TXT file
+csv_file = 'output.csv'  # Path to the output CSV file
+
+# Open the input TXT file for reading
+with open(txt_file, 'r') as file:
+    # Read the lines from the TXT file
+    lines = file.readlines()
+
+# Open the output CSV file for writing
+with open(csv_file, 'w', newline='') as file:
+    writer = csv.writer(file)
+
+    # Write each line as a row in the CSV file
+    for line in lines:
+        # Split the line into columns (assuming comma-separated values)
+        columns = line.strip().split(',')
+
+        # Write the columns as a row in the CSV file
+        writer.writerow(columns)
+
+print("Conversion complete. The TXT file has been converted to CSV.")
