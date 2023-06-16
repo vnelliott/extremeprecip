@@ -1,0 +1,37 @@
+import pandas as pd
+import os
+
+folder_path = r'S:\BigPrecip\Precip\FORTS\SRCC_FORTS_DATA\all _the_data_in_one'
+
+for filename in os.listdir(folder_path):
+    filepath = os.path.join(folder_path, filename)
+    
+    if os.path.isfile(filepath):
+        df = pd.read_csv(filepath)
+        columns_to_keep = ['STNO', 'LAT', 'LON', 'YEAR', 'MO', 'DAY', 'PRCP-99']
+        df = df.loc[:, columns_to_keep]
+        df.columns = ['STATION_ID', 'LAT', 'LON', 'YEAR', 'MO', 'DAY', 'PRECIP']
+        df.insert(df.columns.get_loc('DAY') + 1, 'TIME', '')
+        df.insert(df.columns.get_loc('STATION_ID') + 1, 'NAME', '')
+        df.insert(df.columns.get_loc('LON') + 1, 'ELEV', '')
+        df["YEAR"] = df["YEAR"].fillna(0)
+        df["MO"] = df["MO"].fillna(0)
+        df["DAY"] = df["DAY"].fillna(0)
+
+        # Convert to integers and then to strings
+        df["DATE"] = pd.to_datetime(
+            df["YEAR"].astype(int).astype(str)
+            + "/"
+            + df["MO"].astype(int).astype(str)
+            + "/"
+            + df["DAY"].astype(int).astype(str),
+            errors="coerce"
+        )
+
+        df = df.reindex(columns=['STATION_ID', 'NAME', 'DATE', 'TIME', 'LAT', 'LON', 'ELEV', 'PRECIP'])
+        
+        filename = os.path.basename(filepath)
+        new_filepath = os.path.join('C:\\Pretty Precip Data', filename)
+        df.to_csv(new_filepath, index=False)
+        
+        print(f"Processed file: {filename}")
